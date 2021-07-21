@@ -1,24 +1,13 @@
-import java.net.Inet4Address;
-import java.net.InetAddress;
+import java.io.IOException;
+import java.net.*;
+import java.io.*;
 
 public class PingClient extends UDPPinger{
 
-    public PingMessage(InetAddress adr, int port, String payload){}
+    PingClient pinger = new PingClient();
+    pinger.run();
 
-    public InetAddress getIP(){
-        Inet4Address ip=0.0.0.0;
-        return ip;
+    public void run (){
+    
     }
-
-    public int getPort() {
-        int port =0;
-        return port;
-    }
-
-    public String getPayload(){
-        String payload = "";
-        return payload;
-    }
-
-    run();
 }
