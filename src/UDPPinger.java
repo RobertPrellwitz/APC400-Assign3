@@ -1,10 +1,18 @@
-public class UDPPinger {
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 
-    public void sendPing (PingMessage ping){
+
+public class UDPPinger {
+    byte[] buff = new byte[512];
+    DatagramPacket packet = new DatagramPacket(buff,512);
+
+    public void sendPing (String message){
+
+
 
     }
 
-    public PingMessage receivePing(){
+    public void  receivePing(){
 
     }
 }
