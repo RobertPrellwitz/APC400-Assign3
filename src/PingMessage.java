@@ -1,7 +1,9 @@
+import javax.swing.*;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.time.*;
+
 
 public class PingMessage {
     int portNumber;
@@ -21,8 +23,9 @@ public class PingMessage {
     public InetAddress getIP(){
        String input ;
         InetAddress ip = null;
-        System.out.println("Please enter the destination ip address in form: d.d.d.d");
-        input = System.console().readLine();
+        input =  JOptionPane.showInputDialog("Please enter the destination ip address in form: d.d.d.d");
+        //input = System.console().readLine();
+
         try {
            ip = Inet4Address.getByName(input);
         }
@@ -35,7 +38,8 @@ public class PingMessage {
     public int getPort() {
         int port =0;
         System.out.println("Please enter the Port number :");
-        port = Integer.parseInt(System.console().readLine());
+
+        port = Integer.parseInt(JOptionPane.showInputDialog("Please enter the Port number :"));
         return port;
     }
 

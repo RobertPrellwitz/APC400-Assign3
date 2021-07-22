@@ -17,7 +17,7 @@ public class PingClient extends UDPPinger{
         DatagramPacket inPacket;
         UDPPinger ping = new UDPPinger();
         PingMessage message = new PingMessage();
-        System.out.println("Contacting Host: " + message.internet + "at port: " + message.portNumber);
+        System.out.println("Contacting Host: " + message.internet + " at port: " + message.portNumber);
 
         try {
             pingSock = new DatagramSocket();
