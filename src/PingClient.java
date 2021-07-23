@@ -5,11 +5,11 @@ import java.nio.charset.StandardCharsets;
 
 public class PingClient extends UDPPinger{
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         PingClient pinger = new PingClient();
         pinger.run();
     }
-    public void run () {
+    public void run () throws InterruptedException {
 
         DatagramSocket pingSock = null;
         byte [] buff;
@@ -21,7 +21,7 @@ public class PingClient extends UDPPinger{
 
         try {
             pingSock = new DatagramSocket();
-            pingSock.setSoTimeout(1000);
+            pingSock.setSoTimeout(5000);
 
 
         } catch (IOException exp) {
@@ -38,15 +38,16 @@ public class PingClient extends UDPPinger{
                 System.out.println("Recieve Ping: " + exp);
             }
             inPacket = new DatagramPacket(buff, buff.length);
+            try{ pingSock.receive(inPacket);}
+            catch(IOException exp){System.out.println("Error :" + exp);}
             String Data = inPacket.getData().toString();
             String Address = inPacket.getAddress().toString();
             int Port = inPacket.getPort();
             System.out.println("Recieved Packet " + Data + " from: " + Address + "on port: " + Port  );
-            ping.receivePing();
 
         }
 
-
+        Thread.sleep(10000);
     }
 
 }
