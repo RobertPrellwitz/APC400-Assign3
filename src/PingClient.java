@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 public class PingClient extends UDPPinger{
-    Date now = new Date();
+
     LocalDateTime sentTime;
     LocalDateTime recieveTime;
 
@@ -18,7 +18,7 @@ public class PingClient extends UDPPinger{
     public void run () throws Exception {
 
         DatagramSocket pingSock = null;
-        byte [] buff;
+        byte [] buff = new byte[512];
         DatagramPacket outPacket;
         DatagramPacket inPacket;
         UDPPinger ping = new UDPPinger();
@@ -33,34 +33,42 @@ public class PingClient extends UDPPinger{
         } catch (IOException exp) {
             System.out.println("Error: " + exp);
         }
+        long [] roundTrip = new long[10];
         for (int i = 0; i < 10; i++)
         {
-            String payLoad = message.getPayload(i);
-            buff = payLoad.getBytes();
-            outPacket = new DatagramPacket(buff, buff.length,message.internet,message.portNumber);
-            try{
-            pingSock.send(outPacket);
-            sentTime = LocalDateTime.now();
-            System.out.println(sentTime);
-            }
-            catch(IOException exp){
-                System.out.println("Recieve Ping: " + exp);
-            }
-            inPacket = new DatagramPacket(buff, buff.length);
-            pingSock.receive(inPacket);
+            ping.sendPing(i,message,pingSock);
+            sentTime=LocalDateTime.now();
+
+            inPacket = ping.receivePing(i, pingSock);
             recieveTime = LocalDateTime.now();
             System.out.println(recieveTime);
-            String Data = inPacket.getData().toString();
-            String Address = inPacket.getAddress().toString();
-            int Port = inPacket.getPort();
-            System.out.println("Recieved Packet " + Data + " from: " + Address + "on port: " + Port  );
+
+//            String payLoad = message.getPayload(i);
+//            buff = payLoad.getBytes();
+//            outPacket = new DatagramPacket(buff, buff.length,message.internet,message.portNumber);
+//            try{
+//            pingSock.send(outPacket);
+//            sentTime = LocalDateTime.now();
+//            System.out.println(sentTime);
+//            }
+//            catch(IOException exp){
+//                System.out.println("Recieve Ping: " + exp);
+//            }
+//            inPacket = new DatagramPacket(buff, buff.length);
+//            pingSock.receive(inPacket);
+
+           // String Data = inPacket.getData().toString();
+            //String Address = inPacket.getAddress().toString();
+           // int Port = inPacket.getPort();
+           // System.out.println("Recieved Packet " + Data + " from: " + Address + "on port: " + Port  );
             Duration RTT = Duration.between(sentTime , recieveTime);
             long milliSeconds = RTT.toMillis();
+            roundTrip[i] = milliSeconds;
             message.printData(inPacket, milliSeconds);
 
         }
 
-
+    pingTime(roundTrip);
     }
 
 }
