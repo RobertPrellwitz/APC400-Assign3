@@ -2,17 +2,23 @@ import java.io.IOException;
 import java.net.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 public class PingClient extends UDPPinger{
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    LocalDateTime sentTime;
+    LocalDateTime recieveTime;
+
+    public static void main(String[] args) throws Exception {
         PingClient pinger = new PingClient();
         pinger.run();
     }
-    public void run () throws InterruptedException {
+    public void run () throws Exception {
 
         DatagramSocket pingSock = null;
-        byte [] buff;
+        byte [] buff = new byte[512];
         DatagramPacket outPacket;
         DatagramPacket inPacket;
         UDPPinger ping = new UDPPinger();
@@ -27,27 +33,42 @@ public class PingClient extends UDPPinger{
         } catch (IOException exp) {
             System.out.println("Error: " + exp);
         }
+        long [] roundTrip = new long[10];
         for (int i = 0; i < 10; i++)
         {
-            String payLoad = message.getPayload(i);
-            buff = payLoad.getBytes();
-            outPacket = new DatagramPacket(buff, buff.length,message.internet,message.portNumber);
-            try{
-            pingSock.send(outPacket);}
-            catch(IOException exp){
-                System.out.println("Recieve Ping: " + exp);
-            }
-            inPacket = new DatagramPacket(buff, buff.length);
-            try{ pingSock.receive(inPacket);}
-            catch(IOException exp){System.out.println("Error :" + exp);}
-            String Data = inPacket.getData().toString();
-            String Address = inPacket.getAddress().toString();
-            int Port = inPacket.getPort();
-            System.out.println("Recieved Packet " + Data + " from: " + Address + "on port: " + Port  );
+            ping.sendPing(i,message,pingSock);
+            sentTime=LocalDateTime.now();
+
+            inPacket = ping.receivePing(i, pingSock);
+            recieveTime = LocalDateTime.now();
+            System.out.println(recieveTime);
+
+//            String payLoad = message.getPayload(i);
+//            buff = payLoad.getBytes();
+//            outPacket = new DatagramPacket(buff, buff.length,message.internet,message.portNumber);
+//            try{
+//            pingSock.send(outPacket);
+//            sentTime = LocalDateTime.now();
+//            System.out.println(sentTime);
+//            }
+//            catch(IOException exp){
+//                System.out.println("Recieve Ping: " + exp);
+//            }
+//            inPacket = new DatagramPacket(buff, buff.length);
+//            pingSock.receive(inPacket);
+
+           // String Data = inPacket.getData().toString();
+            //String Address = inPacket.getAddress().toString();
+           // int Port = inPacket.getPort();
+           // System.out.println("Recieved Packet " + Data + " from: " + Address + "on port: " + Port  );
+            Duration RTT = Duration.between(sentTime , recieveTime);
+            long milliSeconds = RTT.toMillis();
+            roundTrip[i] = milliSeconds;
+            message.printData(inPacket, milliSeconds);
 
         }
 
-        Thread.sleep(10000);
+    pingTime(roundTrip);
     }
 
 }
