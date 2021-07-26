@@ -43,29 +43,11 @@ public class PingClient extends UDPPinger{
             recieveTime = LocalDateTime.now();
             System.out.println(recieveTime);
 
-//            String payLoad = message.getPayload(i);
-//            buff = payLoad.getBytes();
-//            outPacket = new DatagramPacket(buff, buff.length,message.internet,message.portNumber);
-//            try{
-//            pingSock.send(outPacket);
-//            sentTime = LocalDateTime.now();
-//            System.out.println(sentTime);
-//            }
-//            catch(IOException exp){
-//                System.out.println("Recieve Ping: " + exp);
-//            }
-//            inPacket = new DatagramPacket(buff, buff.length);
-//            pingSock.receive(inPacket);
-
-           // String Data = inPacket.getData().toString();
-            //String Address = inPacket.getAddress().toString();
-           // int Port = inPacket.getPort();
-           // System.out.println("Recieved Packet " + Data + " from: " + Address + "on port: " + Port  );
             Duration RTT = Duration.between(sentTime , recieveTime);
             long milliSeconds = RTT.toMillis();
             roundTrip[i] = milliSeconds;
             message.printData(inPacket, milliSeconds);
-
+            Thread.sleep(1000);
         }
 
     pingTime(roundTrip);
