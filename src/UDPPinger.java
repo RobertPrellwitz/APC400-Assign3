@@ -39,9 +39,10 @@ public class UDPPinger {
         return inPacket;
 
     }
-    public void pingTime(long [] roundTrip ){
-    System.out.println("Longest Ping Time: " + Arrays.stream(roundTrip).max());
-    System.out.println("Shortest Ping Time: " + Arrays.stream(roundTrip).min());
-    System.out.println("Average Ping Time: " + Arrays.stream(roundTrip).average());
+    public void pingTime(long [] roundTrip, int timeoutCount ){
+    System.out.println("\nTimeout Count: " + timeoutCount+ " which is a " + (timeoutCount*10)+"% failure rate!" );
+    System.out.println("Longest Ping Time: " + Arrays.stream(roundTrip).max().getAsLong() + "  milliseconds");
+    System.out.println("Shortest Ping Time: " + Arrays.stream(roundTrip).min().getAsLong() + "  milliseconds");
+    System.out.println("Average Ping Time: " + Arrays.stream(roundTrip).average().getAsDouble() + "  milliseconds");
     }
 }

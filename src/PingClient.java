@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.concurrent.TimeoutException;
 
 public class PingClient extends UDPPinger{
 
@@ -27,30 +28,44 @@ public class PingClient extends UDPPinger{
 
         try {
             pingSock = new DatagramSocket();
-            pingSock.setSoTimeout(5000);
+            pingSock.setSoTimeout(1000);
 
 
         } catch (IOException exp) {
             System.out.println("Error: " + exp);
         }
-        long [] roundTrip = new long[10];
+        long[] roundTrip = new long[10];
+        String[] reply = new String[10];
+        int timeoutCount =0;
+
         for (int i = 0; i < 10; i++)
         {
             ping.sendPing(i,message,pingSock);
             sentTime=LocalDateTime.now();
 
-            inPacket = ping.receivePing(i, pingSock);
-            recieveTime = LocalDateTime.now();
-            System.out.println(recieveTime);
+            try {
+                inPacket = ping.receivePing(i, pingSock);
+                recieveTime = LocalDateTime.now();
+                System.out.println(recieveTime);
+                Duration RTT = Duration.between(sentTime , recieveTime);
+                long milliSeconds = RTT.toMillis();
+                roundTrip[i] = milliSeconds;
+                reply[i] = message.printData(inPacket, milliSeconds);
+                Thread.sleep(1000);
+            }
+            catch(Exception timeout)
+            {
+                System.out.println("Ping Timed out: " + timeout);
+                timeoutCount++;
+            }
 
-            Duration RTT = Duration.between(sentTime , recieveTime);
-            long milliSeconds = RTT.toMillis();
-            roundTrip[i] = milliSeconds;
-            message.printData(inPacket, milliSeconds);
-            Thread.sleep(1000);
         }
-
-    pingTime(roundTrip);
+    System.out.println();
+    for (int i =0; i < 9; i++)
+    {
+        System.out.println(reply[i]);
+    }
+    pingTime(roundTrip, timeoutCount);
     }
 
 }

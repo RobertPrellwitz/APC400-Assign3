@@ -52,7 +52,7 @@ public class PingMessage {
         return payload;
     }
 
-    public void printData(DatagramPacket request, long RTT) throws Exception
+    public String printData(DatagramPacket request, long RTT) throws Exception
     {
 
         byte[] buf = request.getData();
@@ -65,6 +65,11 @@ public class PingMessage {
                         request.getAddress().getHostAddress() +
                         ": " +
                         new String(line) + " Delay: " + RTT );
+        String Data = String.format("Received from " +
+                request.getAddress().getHostAddress() +
+                ": " +
+                new String(line) + " Delay: " + RTT );
+        return Data;
     }
     public int port(int port) {
         return port;
